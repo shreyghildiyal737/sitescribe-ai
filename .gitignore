@@ -1,0 +1,24 @@
+# Secrets
+.env
+.env.local
+backend/.env
+*.local.ps1
+
+# Local runtime data: H2 database and uploaded voice notes
+backend/data/
+backend/uploads/
+
+# Build output
+backend/target/
+frontend/.next/
+frontend/node_modules/
+*.tsbuildinfo
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

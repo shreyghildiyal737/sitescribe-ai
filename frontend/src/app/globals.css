@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --ink: #1c1917;
+  --line: #e7e5e4;
+  --brand: #f59e0b;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-semibold
+           transition-all duration-150 select-none
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98];
+  }
+  .btn-primary { @apply bg-stone-900 text-white hover:bg-stone-800 shadow-sm; }
+  .btn-accent  { @apply bg-amber-500 text-stone-900 hover:bg-amber-400 shadow-sm; }
+  .btn-ghost   { @apply bg-white text-stone-700 border border-stone-200 hover:bg-stone-50; }
+  .btn-danger  { @apply bg-red-600 text-white hover:bg-red-500 shadow-sm; }
+
+  /* Inputs */
+  .input {
+    @apply w-full rounded-2xl border border-stone-200 bg-white px-4 py-3.5 text-stone-900
+           placeholder:text-stone-400 transition-shadow
+           focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400;
+  }
+
+  /* Surfaces */
+  .card {
+    @apply bg-white border border-stone-200 rounded-3xl shadow-[0_1px_2px_rgba(28,25,23,0.04),0_8px_24px_rgba(28,25,23,0.05)];
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg;
+  }
+
+  /* Selectable tile (radio cards) */
+  .tile {
+    @apply flex items-center justify-center rounded-2xl border-2 cursor-pointer font-semibold text-sm transition-colors
+           border-stone-200 bg-white text-stone-700 hover:border-stone-300;
+  }
+  .tile-active { @apply border-amber-500 bg-amber-50 text-amber-900; }
+
+  /* Subtle link */
+  .link-muted { @apply inline-flex items-center gap-1 text-stone-500 font-semibold text-sm hover:text-stone-900 transition-colors; }
+}
+
+/* Tasteful, lightweight animated background for the marketing hero (CSS only — no WebGL) */
+.hero-mesh {
+  background:
+    radial-gradient(40rem 40rem at 15% 10%, rgba(245, 158, 11, 0.18), transparent 60%),
+    radial-gradient(36rem 36rem at 85% 20%, rgba(251, 191, 36, 0.14), transparent 55%),
+    radial-gradient(44rem 44rem at 60% 95%, rgba(168, 162, 158, 0.18), transparent 60%);
+  background-size: 200% 200%;
+  animation: meshDrift 24s ease-in-out infinite alternate;
+}
+@keyframes meshDrift {
+  0%   { background-position: 0% 0%, 100% 0%, 50% 100%; }
+  100% { background-position: 20% 15%, 80% 10%, 45% 85%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-mesh { animation: none; }
+}

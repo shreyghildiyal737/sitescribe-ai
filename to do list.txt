@@ -1,0 +1,85 @@
+SITESCRIBE AI — TO-DO LIST
+Last updated: 2026-06-02
+
+====================================================================
+MUST FIX BEFORE GOING PUBLIC / DEPLOYING (security)
+====================================================================
+
+[ ] 1. JWT SECRET  (CRITICAL)
+    Problem: application.yml ships a hardcoded, PUBLIC default JWT secret,
+    and backend/.env has JWT_SECRET= (empty). In production the app would
+    fall back to the known default — anyone could forge a valid token for
+    ANY company = full account takeover.
+    Fix: set a strong JWT_SECRET env var in production (Railway/host).
+    Generate one with:
+      node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+[ ] 2. ROTATE API KEYS  (HIGH)
+    Problem: Groq + Gemini keys are stored in plaintext in
+    construc-torr/*.txt and were shared in chat.
+    Fix: regenerate (rotate) both keys before public launch; never commit
+    keys; keep them only in env vars / a secrets manager.
+      - Groq:   https://console.groq.com/keys
+      - Gemini: https://aistudio.google.com/apikey
+
+[ ] 3. LOGIN USER-ENUMERATION  (MEDIUM)
+    Problem: AuthService.login returns different messages for
+    "No account found" vs "Incorrect password" — lets attackers discover
+    which emails are registered.
+    Fix: return one generic message, e.g. "Invalid email or password."
+    File: backend/src/main/java/com/sitescribe/auth/AuthService.java
+
+[ ] 4. SWAGGER / API DOCS ARE PUBLIC  (MEDIUM)
+    Problem: /swagger-ui/** and /v3/api-docs/** are open to everyone —
+    exposes the full API schema.
+    Fix: in production, disable or require auth:
+      springdoc.api-docs.enabled=false
+      springdoc.swagger-ui.enabled=false
+    (or protect behind authentication)
+
+[ ] 5. NO RATE LIMITING ON AUTH  (MEDIUM)
+    Problem: public /api/auth/** (bootstrap + login) has no rate limiting —
+    allows brute-force and signup spam.
+    Fix: add rate limiting (e.g. bucket4j / a gateway / Cloudflare) and/or
+    a captcha on register.
+
+====================================================================
+ALREADY FIXED (2026-06-02) — for reference, no action needed
+====================================================================
+[x] Public, cross-company report export — exports now require auth +
+    company isolation; getForExport() removed; frontend downloads with
+    Bearer header; regression test added.
+[x] passwordHash leak in API responses — @JsonIgnore on AppUser.
+[x] Cross-tenant upload — UploadService now verifies the project belongs to
+    the caller's company (was: any company could upload to any project).
+[x] Auth flow — removed the "Open dashboard" bypass on the landing page;
+    dashboard now redirects to /login if not signed in; expired sessions
+    auto-redirect to login instead of crashing with "Unexpected end of JSON".
+[x] Gemini model gotcha — gemini-2.0-flash had zero free-tier quota;
+    switched to gemini-flash-latest + retry on transient 503/429.
+[x] UI overhaul — design system, real icons, landing page, states.
+[x] PWA manifest + icon (installable).
+[x] Auth + company-isolation tests (5 passing).
+[x] frontend/src/lib/api.ts production API base URL fix.
+
+====================================================================
+PRODUCT / NEXT STEPS (non-security)
+====================================================================
+[ ] Get 1-3 design-partner sites using it live (validate transcript
+    quality + willingness to pay) — the #1 priority.
+[ ] Decide pricing later (per-company tiers, not per-project).
+[ ] PWA: workers "add to home screen".
+[ ] Stage 2: WhatsApp ingestion (biggest adoption lever).
+[ ] docs/IMPLEMENTATION_NOTES.md still says "demo auth only" — stale, update.
+[ ] Stripe — defer until first paying customer.
+
+====================================================================
+LOCAL RUN NOTES
+====================================================================
+- Backend (port 8090):  cd backend
+    set env: AI_MODE=live, GROQ_API_KEY=..., GEMINI_API_KEY=...
+    then: mvn spring-boot:run
+    (omit AI_MODE=live to run in mock mode — no API credits used)
+- Frontend (port 8091):  cd frontend && npm run dev
+- Do NOT source backend/.env as-is locally: it sets STORAGE_MODE=supabase
+  with empty creds, which breaks audio retrieval for live transcription.

@@ -1,0 +1,60 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: sitescribe-backend
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:file:./data/sitescribe;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH}
+    username: ${DATABASE_USER:sa}
+    password: ${DATABASE_PASSWORD:}
+    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+sitescribe:
+  # Security
+  jwt-secret: ${JWT_SECRET:c2l0ZXNjcmliZS1kZXYtc2VjcmV0LWRvLW5vdC11c2UtaW4tcHJvZHVjdGlvbg==}
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:8091}
+  # AI
+  ai:
+    mode: ${AI_MODE:mock}
+    provider: ${AI_PROVIDER:mock}
+    api-key: ${GROQ_API_KEY:}
+    gemini-api-key: ${GEMINI_API_KEY:}
+  # File storage
+  storage:
+    mode: ${STORAGE_MODE:local}
+    local-dir: ${UPLOADS_DIR:./uploads}
+    supabase-url: ${SUPABASE_URL:}
+    supabase-service-key: ${SUPABASE_SERVICE_KEY:}
+    supabase-bucket: ${SUPABASE_BUCKET:audio-uploads}
+  # Email
+  email:
+    api-key: ${RESEND_API_KEY:}
+    from: ${EMAIL_FROM:noreply@sitescribe.ai}
+    app-url: ${APP_URL:http://localhost:8091}
+
+# Error monitoring — disabled when DSN is not set
+sentry:
+  dsn: ${SENTRY_DSN:}
+  traces-sample-rate: 0.2
+
+logging:
+  level:
+    org.hibernate.SQL: warn
