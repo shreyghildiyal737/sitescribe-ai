@@ -29,8 +29,10 @@ spring:
 
 sitescribe:
   # Security
-  jwt-secret: ${JWT_SECRET:c2l0ZXNjcmliZS1kZXYtc2VjcmV0LWRvLW5vdC11c2UtaW4tcHJvZHVjdGlvbg==}
+  # Blank means a random key per process (sessions end on restart). Must be 32+ bytes when set.
+  jwt-secret: ${JWT_SECRET:}
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:8091}
+  auth-rate-limit-per-minute: ${AUTH_RATE_LIMIT_PER_MINUTE:10}
   # AI
   ai:
     mode: ${AI_MODE:mock}
@@ -49,6 +51,13 @@ sitescribe:
     api-key: ${RESEND_API_KEY:}
     from: ${EMAIL_FROM:noreply@sitescribe.ai}
     app-url: ${APP_URL:http://localhost:8091}
+
+# The API schema stays private unless explicitly switched on (start.ps1 does, for local work).
+springdoc:
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:false}
+  swagger-ui:
+    enabled: ${API_DOCS_ENABLED:false}
 
 # Error monitoring — disabled when DSN is not set
 sentry:

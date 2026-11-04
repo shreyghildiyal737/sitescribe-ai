@@ -7,3 +7,7 @@ spring:
     username: sa
     password: ""
     driver-class-name: org.h2.Driver
+
+# The suite signs up many companies from one address; the limiter has its own unit test.
+sitescribe:
+  auth-rate-limit-per-minute: 1000

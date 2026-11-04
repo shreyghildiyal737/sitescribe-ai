@@ -6,7 +6,7 @@ The backend is intentionally modular but not over-engineered.
 
 Packages:
 
-- `auth`: demo bootstrap/login only
+- `auth`: BCrypt passwords, JWT sessions, per-address rate limit on login and sign-up
 - `company`: company tenant root
 - `user`: users and roles
 - `project`: jobs and assignments
@@ -16,9 +16,12 @@ Packages:
 - `export`: simple export endpoints
 - `audit`: future audit trail foundation
 
-## Security Warning
+## Security Model
 
-Demo auth is not production authentication. Before production, add proper JWT/session auth and method-level authorization.
+Every request outside `/api/auth/**` needs a valid JWT. Company isolation is enforced in the
+services: a record belonging to another company answers 404, so its existence does not leak.
+`CompanyIsolationTest` and `AuthHardeningTest` guard both. Still open: rate limiting is
+in-memory per instance, and sign-up answers 409 for an email already registered.
 
 ## Report Lifecycle
 

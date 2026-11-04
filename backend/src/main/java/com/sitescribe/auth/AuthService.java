@@ -1,6 +1,5 @@
 package com.sitescribe.auth;
 
-import com.sitescribe.common.NotFoundException;
 import com.sitescribe.company.Company;
 import com.sitescribe.company.CompanyRepository;
 import com.sitescribe.user.AppUser;
@@ -12,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
+
+    static final String INVALID_CREDENTIALS = "Invalid email or password.";
+    private static final String DUMMY_HASH = new BCryptPasswordEncoder().encode("timing-equaliser");
 
     private final CompanyRepository companies;
     private final UserRepository users;
@@ -38,11 +40,14 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest req) {
-        AppUser user = users.findByEmail(req.email())
-            .orElseThrow(() -> new NotFoundException("No account found with that email."));
+        AppUser user = users.findByEmail(req.email()).orElse(null);
 
-        if (user.getPasswordHash() == null || !encoder.matches(req.password(), user.getPasswordHash()))
-            throw new IllegalArgumentException("Incorrect password.");
+        // One message for both failures, and a bcrypt check even when the email is unknown, so
+        // neither the wording nor the response time reveals which emails have accounts.
+        String hash = (user == null || user.getPasswordHash() == null) ? DUMMY_HASH : user.getPasswordHash();
+        boolean passwordMatches = encoder.matches(req.password(), hash);
+        if (user == null || user.getPasswordHash() == null || !passwordMatches)
+            throw new IllegalArgumentException(INVALID_CREDENTIALS);
 
         return toResponse(user);
     }

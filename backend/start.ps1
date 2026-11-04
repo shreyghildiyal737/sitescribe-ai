@@ -7,4 +7,5 @@ if (Test-Path $secrets) {
 } else {
     Write-Warning "secrets.local.ps1 not found - running in mock AI mode."
 }
+$env:API_DOCS_ENABLED = "true"
 mvn spring-boot:run

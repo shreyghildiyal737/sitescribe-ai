@@ -1,11 +1,11 @@
 SITESCRIBE AI — TO-DO LIST
-Last updated: 2026-06-02
+Last updated: 2026-11-04
 
 ====================================================================
 MUST FIX BEFORE GOING PUBLIC / DEPLOYING (security)
 ====================================================================
 
-[ ] 1. JWT SECRET  (CRITICAL)
+[x] 1. JWT SECRET  (CRITICAL)  -- FIXED 2026-11-04
     Problem: application.yml ships a hardcoded, PUBLIC default JWT secret,
     and backend/.env has JWT_SECRET= (empty). In production the app would
     fall back to the known default — anyone could forge a valid token for
@@ -16,20 +16,22 @@ MUST FIX BEFORE GOING PUBLIC / DEPLOYING (security)
 
 [ ] 2. ROTATE API KEYS  (HIGH)
     Problem: Groq + Gemini keys are stored in plaintext in
-    construc-torr/*.txt and were shared in chat.
+    construc-torr/*.txt and were shared in chat. They were also hard-coded
+    in backend/start.ps1 until 2026-11-04; they now live in the gitignored
+    backend/secrets.local.ps1, and never entered git history.
     Fix: regenerate (rotate) both keys before public launch; never commit
     keys; keep them only in env vars / a secrets manager.
       - Groq:   https://console.groq.com/keys
       - Gemini: https://aistudio.google.com/apikey
 
-[ ] 3. LOGIN USER-ENUMERATION  (MEDIUM)
+[x] 3. LOGIN USER-ENUMERATION  (MEDIUM)  -- FIXED 2026-11-04
     Problem: AuthService.login returns different messages for
     "No account found" vs "Incorrect password" — lets attackers discover
     which emails are registered.
     Fix: return one generic message, e.g. "Invalid email or password."
     File: backend/src/main/java/com/sitescribe/auth/AuthService.java
 
-[ ] 4. SWAGGER / API DOCS ARE PUBLIC  (MEDIUM)
+[x] 4. SWAGGER / API DOCS ARE PUBLIC  (MEDIUM)  -- FIXED 2026-11-04
     Problem: /swagger-ui/** and /v3/api-docs/** are open to everyone —
     exposes the full API schema.
     Fix: in production, disable or require auth:
@@ -37,7 +39,7 @@ MUST FIX BEFORE GOING PUBLIC / DEPLOYING (security)
       springdoc.swagger-ui.enabled=false
     (or protect behind authentication)
 
-[ ] 5. NO RATE LIMITING ON AUTH  (MEDIUM)
+[x] 5. NO RATE LIMITING ON AUTH  (MEDIUM)  -- FIXED 2026-11-04
     Problem: public /api/auth/** (bootstrap + login) has no rate limiting —
     allows brute-force and signup spam.
     Fix: add rate limiting (e.g. bucket4j / a gateway / Cloudflare) and/or
@@ -70,7 +72,7 @@ PRODUCT / NEXT STEPS (non-security)
 [ ] Decide pricing later (per-company tiers, not per-project).
 [ ] PWA: workers "add to home screen".
 [ ] Stage 2: WhatsApp ingestion (biggest adoption lever).
-[ ] docs/IMPLEMENTATION_NOTES.md still says "demo auth only" — stale, update.
+[x] docs/IMPLEMENTATION_NOTES.md "demo auth only" — updated 2026-11-04.
 [ ] Stripe — defer until first paying customer.
 
 ====================================================================
