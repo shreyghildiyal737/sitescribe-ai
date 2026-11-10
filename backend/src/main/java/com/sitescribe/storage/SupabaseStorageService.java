@@ -75,10 +75,11 @@ public class SupabaseStorageService implements StorageService {
     }
 
     @Override
-    public void delete(String reference) {
+    public void delete(String reference) throws IOException {
         // Extract the key from the public URL
         String prefix = supabaseUrl + "/storage/v1/object/public/" + bucket + "/";
-        if (!reference.startsWith(prefix)) return;
+        if (!reference.startsWith(prefix))
+            throw new IOException("Not a reference to this bucket, so nothing was deleted");
         String key = reference.substring(prefix.length());
 
         String deleteUrl = supabaseUrl + "/storage/v1/object/" + bucket + "/" + key;
@@ -89,7 +90,12 @@ public class SupabaseStorageService implements StorageService {
             .build();
 
         try {
-            http.send(request, HttpResponse.BodyHandlers.discarding());
-        } catch (Exception ignored) {}
+            var response = http.send(request, HttpResponse.BodyHandlers.discarding());
+            if (response.statusCode() / 100 != 2)
+                throw new IOException("Supabase delete failed (HTTP " + response.statusCode() + ")");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Delete interrupted", e);
+        }
     }
 }

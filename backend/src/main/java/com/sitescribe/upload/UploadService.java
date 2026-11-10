@@ -4,6 +4,8 @@ import com.sitescribe.common.NotFoundException;
 import com.sitescribe.project.ProjectRepository;
 import com.sitescribe.storage.StorageService;
 import com.sitescribe.user.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +15,8 @@ import java.util.UUID;
 
 @Service
 public class UploadService {
+
+    private static final Logger log = LoggerFactory.getLogger(UploadService.class);
 
     private final UploadRepository uploads;
     private final ProjectRepository projects;
@@ -56,7 +60,14 @@ public class UploadService {
 
     public void deleteAudioFile(Upload upload) {
         if (upload.getFilePath() == null) return;
-        storage.delete(upload.getFilePath());
-        upload.clearFilePath();
+        try {
+            storage.delete(upload.getFilePath());
+            upload.clearFilePath();
+        } catch (IOException | RuntimeException e) {
+            // Keep the path so the leftover file can still be found and removed; clearing it
+            // would orphan audio the privacy page says is gone. Not rethrown, because the
+            // report has already been saved and the user should not see it fail.
+            log.warn("Could not delete audio for upload {}", upload.getId(), e);
+        }
     }
 }

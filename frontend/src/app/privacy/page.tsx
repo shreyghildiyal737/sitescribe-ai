@@ -21,7 +21,7 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-bold">2. What data we collect</h2>
           <ul className="text-sm text-gray-700 list-disc pl-5 space-y-1">
             <li><strong>Account data</strong>: your name and email address, used to identify you within your company's workspace.</li>
-            <li><strong>Voice recordings</strong>: audio captured when you use the record feature. Sent to Groq Inc. for transcription, then <strong>permanently deleted from our servers</strong> once the transcript is generated.</li>
+            <li><strong>Voice recordings</strong>: audio captured when you use the record feature. Sent to Groq Inc. for transcription, then <strong>permanently deleted from our servers</strong> once your report has been generated from it. If processing fails, the recording is kept so you can retry.</li>
             <li><strong>Transcripts and reports</strong>: text derived from your recordings, stored as the work product of this service.</li>
             <li><strong>Location (optional)</strong>: GPS coordinates if you opt in. Used only to tag the relevant site report.</li>
           </ul>

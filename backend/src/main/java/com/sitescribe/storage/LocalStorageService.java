@@ -33,9 +33,7 @@ public class LocalStorageService implements StorageService {
     }
 
     @Override
-    public void delete(String reference) {
-        try {
-            Files.deleteIfExists(Path.of(reference));
-        } catch (IOException ignored) {}
+    public void delete(String reference) throws IOException {
+        Files.deleteIfExists(Path.of(reference));
     }
 }
