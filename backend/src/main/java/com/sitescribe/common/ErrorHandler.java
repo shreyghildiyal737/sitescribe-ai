@@ -21,6 +21,11 @@ public class ErrorHandler {
             .body(ApiResponse.fail(ex.getMessage()));
     }
 
+    @ExceptionHandler(ConflictException.class)
+    ResponseEntity<ApiResponse<Void>> handleConflict(ConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.fail(ex.getMessage()));
+    }
+
     // Without this, an unknown path fell through to the catch-all below and answered 500.
     @ExceptionHandler(NoResourceFoundException.class)
     ResponseEntity<ApiResponse<Void>> handleNoSuchPath(NoResourceFoundException ex) {

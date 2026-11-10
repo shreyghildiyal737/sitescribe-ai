@@ -119,7 +119,8 @@ export default function ReportDetail() {
             <CopyIcon size={16} /> Copy
           </button>
           <button onClick={() => downloadReportText(id).catch(() => setMessage('Download failed'))}
-            className="btn btn-primary">
+            className="btn btn-primary" disabled={report.status !== 'APPROVED'}
+            title={report.status === 'APPROVED' ? undefined : 'Approve the report before downloading it'}>
             <DownloadIcon size={16} /> Download
           </button>
         </div>

@@ -42,7 +42,7 @@ API runs at:
 http://localhost:8090
 ```
 
-Swagger:
+Swagger (off by default so the schema is not public; `start.ps1` sets `API_DOCS_ENABLED=true`, or set it yourself):
 
 ```txt
 http://localhost:8090/swagger-ui.html
@@ -118,7 +118,7 @@ The adapter interfaces are `TranscriptionService` and `ReportExtractionService` 
 ## Product Rules
 
 - AI drafts only.
-- Human approval required.
+- Human approval required: export answers 409 until a manager has approved the report.
 - No continuous worker tracking.
 - Location is captured only at submission time when allowed.
 - Reports store raw transcript, structured JSON, and final text.
