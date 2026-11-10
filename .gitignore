@@ -22,3 +22,6 @@ frontend/node_modules/
 # OS
 .DS_Store
 Thumbs.db
+
+# Private working notes, kept on disk only
+to do list.txt
