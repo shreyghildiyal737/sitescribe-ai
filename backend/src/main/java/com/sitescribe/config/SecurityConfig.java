@@ -34,6 +34,7 @@ public class SecurityConfig {
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                 // Exports were previously public — that allowed unauthenticated, cross-tenant
                 // download of any report by id. Now authenticated + company-checked in the controller.
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
